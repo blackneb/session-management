@@ -32,23 +32,28 @@ namespace session_management.Migrations
 
                     b.Property<string>("AdminAddress")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("AdminEmail")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("AdminPassword")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("AdminPhoneNumber")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("AdminUsername")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("AdminID");
 
@@ -73,6 +78,8 @@ namespace session_management.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("ExtensionID");
+
+                    b.HasIndex("KeyID");
 
                     b.ToTable("KeyExtensions");
                 });
@@ -122,6 +129,10 @@ namespace session_management.Migrations
 
                     b.HasKey("UserKeyID");
 
+                    b.HasIndex("KeyID");
+
+                    b.HasIndex("UserID");
+
                     b.ToTable("UserKeys");
                 });
 
@@ -135,26 +146,68 @@ namespace session_management.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsEmailVerified")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("UserID");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("session_management.Models.KeyExtensionModel", b =>
+                {
+                    b.HasOne("session_management.Models.KeyModel", "Key")
+                        .WithMany()
+                        .HasForeignKey("KeyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Key");
+                });
+
+            modelBuilder.Entity("session_management.Models.UserKeyModel", b =>
+                {
+                    b.HasOne("session_management.Models.KeyModel", "Key")
+                        .WithMany()
+                        .HasForeignKey("KeyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("session_management.Models.UserModel", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Key");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

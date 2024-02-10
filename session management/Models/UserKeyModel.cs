@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 
 namespace session_management.Models
 {
@@ -6,8 +7,15 @@ namespace session_management.Models
     {
         [Key]
         public int UserKeyID { get; set; }
+
         public int UserID { get; set; }
+
         public int KeyID { get; set; }
+
         public int MachinesUsed { get; set; }
+
+        public UserModel User { get; set; }
+
+        public KeyModel Key { get; set; }
     }
 }

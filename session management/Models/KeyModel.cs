@@ -6,9 +6,16 @@ namespace session_management.Models
     {
         [Key]
         public int KeyID { get; set; }
+
+        [Required]
         public string KeyValue { get; set; }
+
+        [Required]
         public DateTime StartDate { get; set; }
+
+        [Required]
         public DateTime ExpiryDate { get; set; }
+
         public int MaxMachines { get; set; }
     }
 }

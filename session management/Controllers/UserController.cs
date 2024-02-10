@@ -7,6 +7,8 @@ using session_management.Data;
 using session_management.DTO;
 using session_management.Models;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace session_management.Controllers
@@ -26,16 +28,26 @@ namespace session_management.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserModelDTO>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserResponseDTO>>> GetUsers()
         {
             var users = await _context.Users.ToListAsync();
-            var userDtos = _mapper.Map<IEnumerable<UserModelDTO>>(users);
 
-            return Ok(userDtos);
+            var userResponseDtos = users.Select(user => new UserResponseDTO
+            {
+                UserID = user.UserID,
+                Username = user.Username,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                IsBlocked = user.IsBlocked,
+                IsEmailVerified = user.IsEmailVerified
+            }).ToList();
+
+            return Ok(userResponseDtos);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserModelDTO>> GetUserById(int id)
+        public async Task<ActionResult<UserResponseDTO>> GetUserById(int id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -44,8 +56,18 @@ namespace session_management.Controllers
                 return NotFound(); // Return 404 if the user is not found
             }
 
-            var userDto = _mapper.Map<UserModelDTO>(user);
-            return Ok(userDto);
+            var userResponseDto = new UserResponseDTO
+            {
+                UserID = user.UserID,
+                Username = user.Username,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                IsBlocked = user.IsBlocked,
+                IsEmailVerified = user.IsEmailVerified
+            };
+
+            return Ok(userResponseDto);
         }
 
         [HttpPost]
@@ -55,6 +77,9 @@ namespace session_management.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            // Hash the password before saving to the database
+            userDto.Password = HashPassword(userDto.Password);
 
             var user = _mapper.Map<UserModel>(userDto);
             _context.Users.Add(user);
@@ -106,6 +131,16 @@ namespace session_management.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // Simple hashing function using SHA256
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
         }
     }
 }

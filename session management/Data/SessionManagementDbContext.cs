@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using session_management.Models;
 
 namespace session_management.Data
@@ -17,8 +18,19 @@ namespace session_management.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Add any additional configuration for your models if needed.
-            // For example, configuring relationships, indexes, etc.
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?))
+                    {
+                        property.SetValueConverter(new ValueConverter<DateTime, DateTime>(
+                            v => v.ToUniversalTime(),
+                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                        ));
+                    }
+                }
+            }
         }
     }
 }
