@@ -1,7 +1,10 @@
-﻿namespace session_management.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace session_management.Models
 {
     public class KeyModel
     {
+        [Key]
         public int KeyID { get; set; }
         public string KeyValue { get; set; }
         public DateTime StartDate { get; set; }

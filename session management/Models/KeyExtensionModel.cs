@@ -1,7 +1,10 @@
-﻿namespace session_management.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace session_management.Models
 {
     public class KeyExtensionModel
     {
+        [Key]
         public int ExtensionID { get; set; }
         public int KeyID { get; set; }
         public DateTime NewExpiryDate { get; set; }

@@ -1,7 +1,10 @@
-﻿namespace session_management.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace session_management.Models
 {
     public class UserKeyModel
     {
+        [Key]
         public int UserKeyID { get; set; }
         public int UserID { get; set; }
         public int KeyID { get; set; }
