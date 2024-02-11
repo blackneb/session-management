@@ -126,6 +126,42 @@ namespace session_management.Controllers
             return NoContent();
         }
 
+        [HttpPost("change-key-value/{id}")]
+        public async Task<ActionResult<KeyModelDTO>> ChangeKeyValue(int id, [FromBody] ChangeKeyValueDTO changeKeyValueDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingKey = await _context.Keys.FindAsync(id);
+
+            if (existingKey == null)
+            {
+                return NotFound();
+            }
+
+            // Generate a unique token as the new key value
+            changeKeyValueDto.NewKeyValue = GenerateUniqueKey();
+
+            // Set the ExpiryDate to one year from now in UTC
+            existingKey.ExpiryDate = DateTime.UtcNow.AddYears(1);
+
+            // Update the KeyModel with the new key value
+            existingKey.KeyValue = changeKeyValueDto.NewKeyValue;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                var updatedKeyDto = _mapper.Map<KeyModelDTO>(existingKey);
+                return Ok(updatedKeyDto);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500);
+            }
+        }
+
         // Generate a unique token using JWT
         private string GenerateUniqueKey()
         {
