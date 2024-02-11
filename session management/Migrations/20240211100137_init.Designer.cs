@@ -12,7 +12,7 @@ using session_management.Data;
 namespace session_management.Migrations
 {
     [DbContext(typeof(SessionManagementDbContext))]
-    [Migration("20240210170734_init")]
+    [Migration("20240211100137_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -107,6 +107,9 @@ namespace session_management.Migrations
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UsedMachines")
+                        .HasColumnType("integer");
 
                     b.HasKey("KeyID");
 

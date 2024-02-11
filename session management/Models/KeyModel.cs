@@ -17,5 +17,6 @@ namespace session_management.Models
         public DateTime ExpiryDate { get; set; }
 
         public int MaxMachines { get; set; }
+        public int UsedMachines { get; set; }
     }
 }

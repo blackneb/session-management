@@ -133,6 +133,78 @@ namespace session_management.Controllers
             return NoContent();
         }
 
+        [HttpPatch("{id}/block")]
+        public async Task<IActionResult> BlockUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.IsBlocked = !user.IsBlocked; // Toggle the IsBlocked property
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new { IsBlocked = user.IsBlocked });
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPatch("{id}/change-password")]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDTO changePasswordDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(); // Return 404 if the user is not found
+            }
+
+            // Verify the current password before allowing a password change
+            if (!VerifyPassword(user.Password, changePasswordDto.CurrentPassword))
+            {
+                return BadRequest("Incorrect current password");
+            }
+
+            // Hash the new password before saving to the database
+            user.Password = HashPassword(changePasswordDto.NewPassword);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok("Password changed successfully");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        // Verify the entered password against the stored hashed password
+        private bool VerifyPassword(string storedHashedPassword, string enteredPassword)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(enteredPassword));
+                var enteredHashedPassword = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+
+                return storedHashedPassword == enteredHashedPassword;
+            }
+        }
+
+
+
         // Simple hashing function using SHA256
         private string HashPassword(string password)
         {

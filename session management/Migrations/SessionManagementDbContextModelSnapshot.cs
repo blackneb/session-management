@@ -105,6 +105,9 @@ namespace session_management.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("UsedMachines")
+                        .HasColumnType("integer");
+
                     b.HasKey("KeyID");
 
                     b.ToTable("Keys");

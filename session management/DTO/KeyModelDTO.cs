@@ -7,5 +7,6 @@
         public DateTime StartDate { get; set; }
         public DateTime ExpiryDate { get; set; }
         public int MaxMachines { get; set; }
+        public int UsedMachines { get; set; }
     }
 }

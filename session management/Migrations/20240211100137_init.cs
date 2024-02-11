@@ -38,7 +38,8 @@ namespace session_management.Migrations
                     KeyValue = table.Column<string>(type: "text", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExpiryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    MaxMachines = table.Column<int>(type: "integer", nullable: false)
+                    MaxMachines = table.Column<int>(type: "integer", nullable: false),
+                    UsedMachines = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
