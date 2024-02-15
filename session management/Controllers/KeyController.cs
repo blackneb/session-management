@@ -21,7 +21,6 @@ namespace session_management.Controllers
     [EnableCors("AllowAnyOrigin")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class KeyController : ControllerBase
     {
         private readonly SessionManagementDbContext _context;
@@ -59,7 +58,8 @@ namespace session_management.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<KeyModelDTO>> CreateKey(KeyModelDTO keyDto)
+        
+        public async Task<ActionResult<KeyModelDTO>> CreateKey([FromBody] MaxMachinesDTO maxMachinesDto)
         {
             if (!ModelState.IsValid)
             {
@@ -67,13 +67,13 @@ namespace session_management.Controllers
             }
 
             // Generate a unique token as the key
-            keyDto.KeyValue = GenerateUniqueKey();
-
-            // Set the StartDate to the current UTC timestamp
-            keyDto.StartDate = DateTime.UtcNow;
-
-            // Set the ExpiryDate to one year from now in UTC
-            keyDto.ExpiryDate = DateTime.UtcNow.AddYears(1);
+            var keyDto = new KeyModelDTO
+            {
+                KeyValue = GenerateUniqueKey(),
+                StartDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddYears(1),
+                MaxMachines = maxMachinesDto.MaxMachines // Set the MaxMachines property from the DTO
+            };
 
             var key = _mapper.Map<KeyModel>(keyDto);
             _context.Keys.Add(key);

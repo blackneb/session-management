@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,43 @@ namespace session_management.Controllers
             return Ok(userKeyDto);
         }
 
+        [HttpGet("key-info/{keyId}")]
+        public ActionResult<KeyInfoDTO> GetKeyInfo(int keyId)
+        {
+            // Find the key by keyId
+            var key = _context.Keys.FirstOrDefault(k => k.KeyID == keyId);
+
+            if (key == null)
+            {
+                return NotFound("Key not found");
+            }
+
+            // Calculate the total used machines for the key
+            var totalUsedMachines = _context.UserKeys
+                .Where(uk => uk.KeyID == keyId)
+                .Sum(uk => uk.MachinesUsed);
+
+            // Calculate the left machines for the key
+            var leftMachines = key.MaxMachines - totalUsedMachines;
+
+            // Retrieve the list of user ids for the key
+            var userIds = _context.UserKeys
+                .Where(uk => uk.KeyID == keyId)
+                .Select(uk => uk.UserID)
+                .ToList();
+
+            var keyInfoDto = new KeyInfoDTO
+            {
+                MaxMachines = key.MaxMachines,
+                UsedMachines = totalUsedMachines,
+                LeftMachines = leftMachines,
+                UserIDs = userIds
+            };
+
+            return Ok(keyInfoDto);
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<UserKeyModelDTO>> CreateUserKey([FromBody] UserKeyModelValueDTO userKeyDto)
         {
@@ -65,20 +103,23 @@ namespace session_management.Controllers
                 return NotFound("Key not found");
             }
 
-            // Check the total number of keys with the same KeyId for the user
-            var totalKeysWithSameKeyId = _context.UserKeys.Count(uk => uk.UserID == userKeyDto.UserID && uk.KeyID == key.KeyID);
+            // Check the total number of machines used by the user for the key
+            var totalMachinesUsed = _context.UserKeys
+                .Where(uk => uk.UserID == userKeyDto.UserID && uk.KeyID == key.KeyID)
+                .Sum(uk => uk.MachinesUsed);
 
-            // Check if the total exceeds or is equal to 3
-            if (totalKeysWithSameKeyId >= 3)
+            // Check if the total exceeds the maxMachines limit
+            if (totalMachinesUsed + 1 > key.MaxMachines)
             {
-                return BadRequest("Maximum limit for KeyId exceeded (greater than or equal to 3).");
+                return BadRequest($"Total machines used exceeds the limit of {key.MaxMachines} for the specified key.");
             }
 
+            // Increment the MachinesUsed property by 1
             var userKey = new UserKeyModel
             {
                 UserID = user.UserID,
                 KeyID = key.KeyID,
-                MachinesUsed = userKeyDto.MachinesUsed
+                MachinesUsed = 1 // Increment by 1
             };
 
             _context.UserKeys.Add(userKey);
@@ -87,6 +128,8 @@ namespace session_management.Controllers
             var createdUserKeyDto = _mapper.Map<UserKeyModelDTO>(userKey);
             return CreatedAtAction(nameof(GetUserKey), new { id = createdUserKeyDto.UserKeyID }, createdUserKeyDto);
         }
+
+
 
     }
 }
