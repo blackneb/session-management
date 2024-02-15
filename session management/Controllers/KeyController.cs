@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ namespace session_management.Controllers
     [EnableCors("AllowAnyOrigin")]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class KeyController : ControllerBase
     {
         private readonly SessionManagementDbContext _context;
