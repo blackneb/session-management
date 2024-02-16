@@ -11,24 +11,24 @@ This backend system is designed for session management, user authentication, and
 | POST | `api/Auth/RegisterAdmin` | Admin Registration |  |
 | POST | `api/Auth/RegisterUser` | User Registration |  |
 | POST | `api/Auth/Login` | Log in  |  |
-| Data 9   | <td colspan="3">User API</td> |       |
+| User API |
 | GET | `api/User` | Get all user list |  |
 | GET | `api/User/id` | Get Specific user by ID |  |
 | PUT | `api/user/id` | Update user information |  |
 | DELETE | `api/user/id` | Delete user by id |  |
 | PATCH | `api/user/id/block` | Block user by id |  |
 | PATCH | `api/user/id/change-password` | Change user password |  |
-| <td colspan="4">Key API</td>    |
+| Key API |
 | GET | `api/key` | Get all key list |  |
 | POST | `api/key` | Create a new key |  |
 | GET | `api/key/id` | Get a key by id |  |
 | DELETE | `api/key/id` | Delete a key by id |  |
 | POST | `api/key/change-key-value/id` | change key value of existing key |  |
-| <td colspan="4">Key Extension API</td>    |
+| Key Extension API |
 | POST | `api/KeyExtension` | Extend the expire date by one year |  |
 | GET | `api/KeyExtension/check-expiration/id` | Check the expiry date of a key by id |  |
 | GET | `api/KeyExtension/check-expiration-by-value/keyvalue` | Check the expiry date of a key by it's key value |  |
-| <td colspan="4">User Key API</td>    |
+| User Key API |
 | GET | `api/UserKey/id` | Check userKey ID  |  |
 | GET | `api/UserKey/key-info/id` | Check key information |  |
 | POST | `api/UserKey` | Register a key for a user |  |
