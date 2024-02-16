@@ -27,6 +27,7 @@ namespace session_management.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<UserKeyModelDTO>> GetUserKey(int id)
         {
             var userKey = await _context.UserKeys
@@ -43,6 +44,7 @@ namespace session_management.Controllers
         }
 
         [HttpGet("key-info/{keyId}")]
+        [Authorize]
         public ActionResult<KeyInfoDTO> GetKeyInfo(int keyId)
         {
             // Find the key by keyId
@@ -80,6 +82,7 @@ namespace session_management.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<UserKeyModelDTO>> CreateUserKey([FromBody] UserKeyModelValueDTO userKeyDto)
         {
             if (!ModelState.IsValid)
@@ -101,6 +104,17 @@ namespace session_management.Controllers
             if (key == null)
             {
                 return NotFound("Key not found");
+            }
+
+            // Check if the user has already used the key
+            var existingUserKey = await _context.UserKeys
+                .FirstOrDefaultAsync(uk => uk.UserID == userKeyDto.UserID && uk.KeyID == key.KeyID);
+
+            if (existingUserKey != null)
+            {
+                // User has already used the key, return a response indicating this
+                var existingUserKeyDto = _mapper.Map<UserKeyModelDTO>(existingUserKey);
+                return Conflict($"User with ID {existingUserKeyDto.UserID} has already used the key with ID {existingUserKeyDto.KeyID}");
             }
 
             // Check the total number of machines used by the user for the key
@@ -128,6 +142,7 @@ namespace session_management.Controllers
             var createdUserKeyDto = _mapper.Map<UserKeyModelDTO>(userKey);
             return CreatedAtAction(nameof(GetUserKey), new { id = createdUserKeyDto.UserKeyID }, createdUserKeyDto);
         }
+
 
 
 

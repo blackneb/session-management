@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace session_management.Controllers
@@ -95,6 +96,7 @@ namespace session_management.Controllers
 
         [HttpPost]
         [Route("RegisterAdmin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterRequestDto registerRequestDto)
         {
             return await Register(registerRequestDto, "Admin");
@@ -146,8 +148,8 @@ namespace session_management.Controllers
                 var checkPasswordResult = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
                 if (checkPasswordResult)
                 {
-                    //Creating Token
-                    var token = GenerateJwtToken(user);
+                    // Creating Token
+                    var token = GenerateJwtToken(user, configuration);
 
                     return Ok(new { Token = token });
                 }
@@ -155,14 +157,20 @@ namespace session_management.Controllers
             return BadRequest("Username or password incorrect");
         }
 
-        private string GenerateJwtToken(IdentityUser user)
+
+
+        private string GenerateJwtToken(IdentityUser user, IConfiguration configuration)
         {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                // Add more claims as needed
-            };
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.Email, user.Email),
+        // Add more claims as needed
+    };
+
+            // Add roles to claims if available
+            var userRoles = userManager.GetRolesAsync(user).Result; // Note: Using Result here to synchronously get the roles
+            claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -171,12 +179,14 @@ namespace session_management.Controllers
                 issuer: configuration["Jwt:Issuer"],
                 audience: configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(configuration["Jwt:ExpiresInMinutes"])),
+                expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(configuration["Jwt:ExpiresInMinutes"])),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+
 
         private string HashPassword(string password)
         {

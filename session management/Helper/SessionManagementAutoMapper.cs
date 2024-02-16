@@ -13,6 +13,7 @@ namespace session_management.Helper
             CreateMap<UserKeyModel, UserKeyModelDTO>();
             CreateMap<UserModel, UserModelDTO>();
             CreateMap<AdminModelDTO, AdminModel>();
+            CreateMap<UserModelUpdateDTO, UserModel>();
             CreateMap<KeyExtensionModelDTO, KeyExtensionModel>();
             CreateMap<KeyModelDTO, KeyModel>();
             CreateMap<UserKeyModelDTO, UserKeyModel>();

@@ -21,9 +21,10 @@ builder.Services.AddDbContext<SessionManagementAuthDbContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("SessionManagementAuthString")));
 
 builder.Services.AddIdentityCore<IdentityUser>().AddRoles<IdentityRole>()
-    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("sessionmanagement")
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("SessionManagement")
     .AddEntityFrameworkStores<SessionManagementAuthDbContext>()
     .AddDefaultTokenProviders();
+
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

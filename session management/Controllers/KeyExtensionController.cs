@@ -27,6 +27,7 @@ namespace session_management.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<KeyExtensionModelDTO>> GetKeyExtension(int id)
         {
             var keyExtension = await _context.KeyExtensions
@@ -43,6 +44,7 @@ namespace session_management.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<KeyExtensionModelDTO>> CreateKeyExtension([FromBody] KeyExtensionModelDTO keyExtensionDto)
         {
             if (!ModelState.IsValid)
@@ -74,6 +76,7 @@ namespace session_management.Controllers
         }
 
         [HttpGet("check-expiration/{keyId}")]
+        [Authorize]
         public async Task<IActionResult> CheckKeyExpiration(int keyId)
         {
             var result = await CheckKeyExpirationInternal(keyId);
@@ -81,6 +84,7 @@ namespace session_management.Controllers
         }
 
         [HttpGet("check-expiration-by-value/{keyValue}")]
+        [Authorize]
         public async Task<IActionResult> CheckKeyExpirationByValue(string keyValue)
         {
             // Find the key by keyValue

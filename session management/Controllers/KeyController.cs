@@ -33,6 +33,7 @@ namespace session_management.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<KeyModelDTO>>> GetKeys()
         {
             var keys = await _context.Keys.ToListAsync();
@@ -43,6 +44,7 @@ namespace session_management.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<KeyModelDTO>> GetKeyById(int id)
         {
             var key = await _context.Keys.FindAsync(id);
@@ -58,7 +60,7 @@ namespace session_management.Controllers
         }
 
         [HttpPost]
-        
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<KeyModelDTO>> CreateKey([FromBody] MaxMachinesDTO maxMachinesDto)
         {
             if (!ModelState.IsValid)
@@ -85,6 +87,7 @@ namespace session_management.Controllers
 
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateKey(int id, KeyModelDTO keyDto)
         {
             if (!ModelState.IsValid)
@@ -113,6 +116,7 @@ namespace session_management.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteKey(int id)
         {
             var key = await _context.Keys.FindAsync(id);
@@ -125,10 +129,12 @@ namespace session_management.Controllers
             _context.Keys.Remove(key);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "Deleted successfully" });
         }
 
+
         [HttpPost("change-key-value/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<KeyModelDTO>> ChangeKeyValue(int id, [FromBody] ChangeKeyValueDTO changeKeyValueDto)
         {
             if (!ModelState.IsValid)
