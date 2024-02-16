@@ -11,7 +11,7 @@ This backend system is designed for session management, user authentication, and
 | POST | `api/Auth/RegisterAdmin` | Admin Registration |  |
 | POST | `api/Auth/RegisterUser` | User Registration |  |
 | POST | `api/Auth/Login` | Log in  |  |
-| <td colspan="1">User API</td>    |
+| Data 9   | <td colspan="3">User API</td> |       |
 | GET | `api/User` | Get all user list |  |
 | GET | `api/User/id` | Get Specific user by ID |  |
 | PUT | `api/user/id` | Update user information |  |
