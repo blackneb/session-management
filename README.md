@@ -1,413 +1,528 @@
 # Session Management Backend
 
-## TechStack: ASP.NET Core Web API
+## Tech Stack: ASP.NET Core Web API
 
 This backend system is designed for session management, user authentication, and key management using ASP.NET Core Web API.
 
-## List of API
-| Method | URL | Description | Role |
-| ------ | --- | ----------- | ---- |
-| Auth API |
-| POST | `api/Auth/RegisterAdmin` | Admin Registration |  |
-| POST | `api/Auth/RegisterUser` | User Registration |  |
-| POST | `api/Auth/Login` | Log in  |  |
-| User API |
-| GET | `api/User` | Get all user list |  |
-| GET | `api/User/id` | Get Specific user by ID |  |
-| PUT | `api/user/id` | Update user information |  |
-| DELETE | `api/user/id` | Delete user by id |  |
-| PATCH | `api/user/id/block` | Block user by id |  |
-| PATCH | `api/user/id/change-password` | Change user password |  |
-| Key API |
-| GET | `api/key` | Get all key list |  |
-| POST | `api/key` | Create a new key |  |
-| GET | `api/key/id` | Get a key by id |  |
-| DELETE | `api/key/id` | Delete a key by id |  |
-| POST | `api/key/change-key-value/id` | change key value of existing key |  |
-| Key Extension API |
-| POST | `api/KeyExtension` | Extend the expire date by one year |  |
-| GET | `api/KeyExtension/check-expiration/id` | Check the expiry date of a key by id |  |
-| GET | `api/KeyExtension/check-expiration-by-value/keyvalue` | Check the expiry date of a key by it's key value |  |
-| User Key API |
-| GET | `api/UserKey/id` | Check userKey ID  |  |
-| GET | `api/UserKey/key-info/id` | Check key information |  |
-| POST | `api/UserKey` | Register a key for a user |  |
+## Table of Contents
+# API Reference
+
+## Auth API
+| Method | URL                             | Description           | Role  |
+|--------|---------------------------------|-----------------------|-------|
+| POST   | `api/Auth/RegisterAdmin`        | Admin Registration    | Admin |
+| POST   | `api/Auth/RegisterUser`         | User Registration     | User  |
+| POST   | `api/Auth/Login`                | Log in                |       |
+
+## User API
+| Method | URL                      | Description                   | Role  |
+|--------|--------------------------|-------------------------------|-------|
+| GET    | `api/User`               | Get all user list             | User |
+| GET    | `api/User/id`            | Get Specific user by ID       | User |
+| PUT    | `api/user/id`            | Update user information       | User |
+| DELETE | `api/user/id`            | Delete user by id             | Admin |
+| PATCH  | `api/user/id/block`      | Block user by id              | Admin |
+| PATCH  | `api/user/id/change-password` | Change user password      | User  |
+
+## Key API
+| Method | URL                    | Description                   | Role  |
+|--------|------------------------|-------------------------------|-------|
+| GET    | `api/key`               | Get all key list              | Admin |
+| POST   | `api/key`               | Create a new key              | Admin |
+| GET    | `api/key/id`            | Get a key by id               | Admin |
+| DELETE | `api/key/id`            | Delete a key by id            | Admin |
+| POST   | `api/key/change-key-value/id` | Change key value of existing key | Admin |
+
+## Key Extension API
+| Method | URL                           | Description                          | Role  |
+|--------|-------------------------------|--------------------------------------|-------|
+| POST   | `api/KeyExtension`            | Extend the expiry date by one year   | Admin |
+| GET    | `api/KeyExtension/check-expiration/id` | Check the expiry date of a key by id | User  |
+| GET    | `api/KeyExtension/check-expiration-by-value/keyvalue` | Check the expiry date of a key by its key value | User |
+
+## User Key API
+| Method | URL                    | Description                | Role  |
+|--------|------------------------|----------------------------|-------|
+| GET    | `api/UserKey/id`       | Check userKey ID            | User  |
+| GET    | `api/UserKey/key-info/id` | Check key information      | User  |
+| POST   | `api/UserKey`          | Register a key for a user   | User  |
+
+
+  
+## List of API Endpoints
 
 ### Auth API
 
 #### `POST api/Auth/RegisterAdmin`
+
 - **Description:** Allows the registration of an admin user.
-- **Response:**
-  - **Success (201 Created):** Admin registration successful. Returns the newly created admin user details.
+
+  - **Request Body:**
     ```json
     {
-      "userId": 1,
-      "username": "admin",
-      "role": "admin",
-      "token": "generated_token"
+      "username": "user@gmail.com",
+      "password": "password here"
     }
     ```
-  - **Error (4xx):** If registration fails due to validation errors or duplicate entries, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Registration failed. Username already exists."
-    }
-    ```
+
+  - **Response:**
+    - **Success (201 Created):** Admin registration successful. Returns the newly created admin user details.
+      ```json
+      User Registered as Admin Successfully
+      ```
+    - **Error (4xx):** If registration fails due to validation errors or duplicate entries, an appropriate error response is returned.
+      ```json
+      {
+        "error": "User already exists"
+      }
+      ```
 
 #### `POST api/Auth/RegisterUser`
+
 - **Description:** Allows the registration of a regular user.
-- **Response:**
-  - **Success (201 Created):** User registration successful. Returns the newly created user details.
+
+  - **Request Body:**
     ```json
     {
-      "userId": 2,
-      "username": "user123",
-      "role": "user",
-      "token": "generated_token"
+      "userID": 0,
+      "username": "jhon@gmail.com",
+      "email": "jhon@gmail.com",
+      "password": "jhondoe",
+      "phoneNumber": "+251948751236",
+      "address": "Ababa",
+      "isBlocked": false,
+      "isEmailVerified": false
     }
     ```
-  - **Error (4xx):** If registration fails due to validation errors or duplicate entries, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Invalid email format."
-    }
-    ```
+
+  - **Response:**
+    - **Success (201 Created):** User registration successful. Returns the newly created user details.
+      ```json
+      {
+        "userID": 8,
+        "username": "jhon@gmail.com",
+        "email": "jhon@gmail.com",
+        "password": null,
+        "phoneNumber": "+251948751236",
+        "address": "Ababa",
+        "isBlocked": false,
+        "isEmailVerified": false
+      }
+      ```
+    - **Error (4xx):** If registration fails due to validation errors or duplicate entries, an appropriate error response is returned.
+      ```json
+      {
+        "error": "User already exists"
+      }
+      ```
 
 #### `POST api/Auth/Login`
+
 - **Description:** Handles user login.
-- **Response:**
-  - **Success (200 OK):** User authentication successful. Returns an authentication token.
+
+  - **Request Body:**
     ```json
     {
-      "userId": 2,
-      "username": "user123",
-      "role": "user",
-      "token": "generated_token"
-    }
-    ```
-  - **Error (4xx):** If login fails due to incorrect credentials or other issues, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Invalid credentials. Please try again."
+      "username": "anteneh@gmail.com",
+      "password": "anteneh"
     }
     ```
 
-### User API
-
-#### `GET api/User`
-- **Description:** Retrieves a list of all users.
-- **Response:**
-  - **Success (200 OK):** Returns a list of user details.
-    ```json
-    [
+  - **Response:**
+    - **Success (200 OK):** User authentication successful. Returns an authentication token.
+      ```json
       {
-        "userId": 1,
-        "username": "admin",
-        "role": "admin"
-      },
-      {
-        "userId": 2,
-        "username": "user123",
-        "role": "user"
+        "token": "New Generated Token"
       }
-    ]
-    ```
-  - **Error (4xx):** If the request fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Unauthorized. Please provide a valid token."
-    }
-    ```
+      ```
+    - **Error (4xx):** If login fails due to incorrect credentials or other issues, an appropriate error response is returned.
+      ```json
+      {
+        "error": "Invalid credentials. Please try again."
+      }
+      ```
 
-#### `GET api/User/id`
-- **Description:** Retrieves details of a specific user based on ID.
-- **Response:**
-  - **Success (200 OK):** Returns the details of the specified user.
-    ```json
-    {
-      "userId": 2,
-      "username": "user123",
-      "role": "user"
-    }
-    ```
-  - **Error (4xx):** If the specified user ID is not found or if the request fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "User not found."
-    }
-    ```
+## User API
 
-#### `PUT api/user/id`
+### `GET api/User`
+
+- **Description:** Retrieves a list of all users.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Response:**
+    - **Success (200 OK):** Returns a list of user details.
+      ```json
+      [
+        {
+          "userID": 1,
+          "username": "john_doe",
+          "email": "john.doe@example.com",
+          "phoneNumber": "+1234567890",
+          "address": "123 Main St, Cityville",
+          "isBlocked": false,
+          "isEmailVerified": true
+        },
+        // ... other users
+      ]
+      ```
+
+### `GET api/User/{id}`
+
+- **Description:** Retrieves details of a specific user by ID.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Response:**
+    - **Success (200 OK):** Returns the user details.
+      ```json
+      {
+        "userID": 1,
+        "username": "john_doe",
+        "email": "john.doe@example.com",
+        "phoneNumber": "+1234567890",
+        "address": "123 Main St, Cityville",
+        "isBlocked": false,
+        "isEmailVerified": true
+      }
+      ```
+
+### `PUT api/User/{id}`
+
 - **Description:** Updates user information.
-- **Response:**
-  - **Success (200 OK):** Returns the updated user details.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Request Body:**
     ```json
     {
-      "userId": 2,
-      "username": "user123_updated",
-      "role": "user"
-    }
-    ```
-  - **Error (4xx):** If the update fails due to validation errors or other issues, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Invalid data provided for update."
+      "phoneNumber": "+9876543210",
+      "address": "456 Oak St, Townsville"
     }
     ```
 
-#### `DELETE api/user/id`
-- **Description:** Deletes a user based on ID.
-- **Response:**
-  - **Success (204 No Content):** User deletion successful.
-  - **Error (4xx):** If the specified user ID is not found or if the deletion fails, an appropriate error response is returned.
+  - **Response:**
+    - **Success (200 OK):** User information updated successfully.
+
+  - **Error (4xx/5xx):** Returns appropriate error responses for invalid requests or server errors.
+
+### `DELETE api/User/{id}`
+
+- **Description:** Deletes a user by ID.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Response:**
+    - **Success (200 OK):** User deleted successfully.
+
+  - **Error (4xx/5xx):** Returns appropriate error responses for invalid requests or server errors.
+
+### `PATCH api/User/{id}/block`
+
+- **Description:** Toggles the block status of a user.
+
+  - **Authorization:** Requires a valid authentication token with "Admin" role.
+
+  - **Response:**
+    - **Success (200 OK):** Returns the updated block status.
+      ```json
+      {
+        "IsBlocked": true
+      }
+      ```
+
+### `PATCH api/User/{id}/change-password`
+
+- **Description:** Changes the password of a user.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Request Body:**
     ```json
     {
-      "error": "User not found for deletion."
+      "currentPassword": "old_password",
+      "newPassword": "new_password"
     }
     ```
 
-#### `PATCH api/user/id/block`
-- **Description:** Blocks a user based on ID.
-- **Response:**
-  - **Success (200 OK):** Returns details after blocking the user.
-    ```json
-    {
-      "userId": 2,
-      "username": "user123",
-      "role": "user",
-      "status": "blocked"
-    }
-    ```
-  - **Error (4xx):** If the specified user ID is not found or if blocking fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "User not found for blocking."
-    }
-    ```
+  - **Response:**
+    - **Success (200 OK):** Password changed successfully.
 
-#### `PATCH api/user/id/change-password`
-- **Description:** Changes the password of a user based on ID.
-- **Response:**
-  - **Success (200 OK):** Returns details after changing the password.
-    ```json
-    {
-      "userId": 2,
-      "username": "user123",
-      "role": "user",
-      "status": "active"
-    }
-    ```
-  - **Error (4xx):** If the specified user ID is not found or if changing the password fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "User not found for changing password."
-    }
-    ```
+  - **Error (4xx/5xx):** Returns appropriate error responses for invalid requests or server errors.
+
+
 ### Key API
 
-#### `GET api/key`
+#### `GET api/Key`
+
 - **Description:** Retrieves a list of all keys.
-- **Response:**
-  - **Success (200 OK):** Returns a list of key details.
-    ```json
-    [
+
+  - **Response:**
+    - **Success (200 OK):** Returns a list of key details.
+      ```json
+      [
+        {
+          "keyID": 1,
+          "keyValue": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+          "startDate": "2024-02-16T06:45:52.705114Z",
+          "expiryDate": "2025-02-16T06:45:52.705114Z",
+          "maxMachines": 5
+        },
+        // ... other keys
+      ]
+      ```
+
+## Key API
+
+### `GET api/Key`
+
+- **Description:** Retrieves a list of all keys.
+
+  - **Authorization:** Requires a valid authentication token with "Admin" role.
+
+  - **Response:**
+    - **Success (200 OK):** Returns a list of key details.
+      ```json
+      [
+        {
+          "keyID": 1,
+          "keyValue": "unique_key_value",
+          "startDate": "2024-02-19T12:00:00Z",
+          "expiryDate": "2025-02-19T12:00:00Z",
+          "maxMachines": 5
+        },
+        // ... other keys
+      ]
+      ```
+
+### `GET api/Key/{id}`
+
+- **Description:** Retrieves details of a specific key by ID.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Response:**
+    - **Success (200 OK):** Returns the key details.
+      ```json
       {
-        "keyId": 1,
-        "keyValue": "key1",
-        "description": "Sample key 1"
-      },
-      {
-        "keyId": 2,
-        "keyValue": "key2",
-        "description": "Sample key 2"
+        "keyID": 1,
+        "keyValue": "unique_key_value",
+        "startDate": "2024-02-19T12:00:00Z",
+        "expiryDate": "2025-02-19T12:00:00Z",
+        "maxMachines": 5
       }
-    ]
-    ```
-  - **Error (4xx):** If the request fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Unauthorized. Please provide a valid token."
-    }
-    ```
+      ```
 
-#### `POST api/key`
+### `POST api/Key`
+
 - **Description:** Creates a new key.
-- **Response:**
-  - **Success (201 Created):** Returns details of the newly created key.
+
+  - **Authorization:** Requires a valid authentication token with "Admin" role.
+
+  - **Request Body:**
     ```json
     {
-      "keyId": 3,
-      "keyValue": "key3",
-      "description": "Sample key 3"
-    }
-    ```
-  - **Error (4xx):** If key creation fails due to validation errors or other issues, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Invalid key data provided for creation."
+      "maxMachines": 5
     }
     ```
 
-#### `GET api/key/id`
-- **Description:** Retrieves details of a specific key based on ID.
-- **Response:**
-  - **Success (200 OK):** Returns the details of the specified key.
+  - **Response:**
+    - **Success (201 Created):** Returns the created key details.
+      ```json
+      {
+        "keyID": 2,
+        "keyValue": "new_unique_key",
+        "startDate": "2024-02-19T12:00:00Z",
+        "expiryDate": "2025-02-19T12:00:00Z",
+        "maxMachines": 5
+      }
+      ```
+
+### `PUT api/Key/{id}`
+
+- **Description:** Updates key information.
+
+  - **Authorization:** Requires a valid authentication token with "Admin" role.
+
+  - **Request Body:**
     ```json
     {
-      "keyId": 2,
-      "keyValue": "key2",
-      "description": "Sample key 2"
-    }
-    ```
-  - **Error (4xx):** If the specified key ID is not found or if the request fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Key not found."
+      "keyValue": "updated_key_value",
+      "startDate": "2024-02-19T12:00:00Z",
+      "expiryDate": "2025-02-19T12:00:00Z",
+      "maxMachines": 10
     }
     ```
 
-#### `DELETE api/key/id`
-- **Description:** Deletes a key based on ID.
-- **Response:**
-  - **Success (204 No Content):** Key deletion successful.
-  - **Error (4xx):** If the specified key ID is not found or if the deletion fails, an appropriate error response is returned.
+  - **Response:**
+    - **Success (204 No Content):** Key information updated successfully.
+
+### `DELETE api/Key/{id}`
+
+- **Description:** Deletes a key by ID.
+
+  - **Authorization:** Requires a valid authentication token with "Admin" role.
+
+  - **Response:**
+    - **Success (200 OK):** Key deleted successfully.
+
+### `POST api/Key/change-key-value/{id}`
+
+- **Description:** Changes the value of a key.
+
+  - **Authorization:** Requires a valid authentication token with "Admin" role.
+
+  - **Response:**
+    - **Success (200 OK):** Returns the updated key details.
+      ```json
+      {
+        "keyID": 1,
+        "keyValue": "new_unique_key",
+        "startDate": "2024-02-19T12:00:00Z",
+        "expiryDate": "2025-02-19T12:00:00Z",
+        "maxMachines": 5
+      }
+      ```
+
+## Key Extension API
+
+### `GET api/KeyExtension/{id}`
+
+- **Description:** Retrieves details of a specific key extension by ID.
+
+  - **Authorization:** Requires a valid authentication token with "Admin" role.
+
+  - **Response:**
+    - **Success (200 OK):** Returns the key extension details.
+      ```json
+      {
+        "extensionID": 1,
+        "keyID": 1,
+        "extensionDate": "2024-02-19T12:00:00Z",
+        "newExpiryDate": "2025-02-19T12:00:00Z"
+      }
+      ```
+
+### `POST api/KeyExtension`
+
+- **Description:** Creates a new key extension.
+
+  - **Authorization:** Requires a valid authentication token with "Admin" role.
+
+  - **Request Body:**
     ```json
     {
-      "error": "Key not found for deletion."
+      "keyID": 1
     }
     ```
 
-#### `POST api/key/change-key-value/id`
-- **Description:** Changes the value of an existing key based on ID.
-- **Response:**
-  - **Success (200 OK):** Returns details after changing the key value.
+  - **Response:**
+    - **Success (201 Created):** Returns the created key extension details.
+      ```json
+      {
+        "extensionID": 2,
+        "keyID": 1,
+        "extensionDate": "2024-02-19T12:00:00Z",
+        "newExpiryDate": "2026-02-19T12:00:00Z"
+      }
+      ```
+
+### `GET api/KeyExtension/check-expiration/{keyId}`
+
+- **Description:** Checks if a key or its extension is expired.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Response:**
+    - **Success (200 OK):** Returns expiration status and date.
+      ```json
+      {
+        "Expired": false,
+        "ExpiryDate": "2026-02-19T12:00:00Z"
+      }
+      ```
+
+### `GET api/KeyExtension/check-expiration-by-value/{keyValue}`
+
+- **Description:** Checks if a key or its extension is expired using key value.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Response:**
+    - **Success (200 OK):** Returns expiration status and date.
+      ```json
+      {
+        "Expired": false,
+        "ExpiryDate": "2026-02-19T12:00:00Z"
+      }
+      ```
+
+
+## User Key API
+
+### `GET api/UserKey/{id}`
+
+- **Description:** Retrieves details of a specific user key by ID.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Response:**
+    - **Success (200 OK):** Returns the user key details.
+      ```json
+      {
+        "userKeyID": 1,
+        "userID": 1,
+        "keyID": 1,
+        "machinesUsed": 3,
+        "key": {
+          "keyID": 1,
+          "keyValue": "unique-key-value",
+          "startDate": "2023-02-19T12:00:00Z",
+          "expiryDate": "2024-02-19T12:00:00Z",
+          "maxMachines": 5
+        }
+      }
+      ```
+
+### `GET api/UserKey/key-info/{keyId}`
+
+- **Description:** Retrieves information about a specific key, including usage statistics.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Response:**
+    - **Success (200 OK):** Returns key information.
+      ```json
+      {
+        "maxMachines": 5,
+        "usedMachines": 3,
+        "leftMachines": 2,
+        "userIDs": [1, 2, 3]
+      }
+      ```
+
+### `POST api/UserKey`
+
+- **Description:** Creates a new user key.
+
+  - **Authorization:** Requires a valid authentication token.
+
+  - **Request Body:**
     ```json
     {
-      "keyId": 2,
-      "keyValue": "key2_updated",
-      "description": "Sample key 2"
-    }
-    ```
-  - **Error (4xx):** If the specified key ID is not found or if changing the key value fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Key not found for changing value."
+      "userID": 1,
+      "keyValue": "unique-key-value"
     }
     ```
 
-### Key Extension API
+  - **Response:**
+    - **Success (201 Created):** Returns the created user key details.
+      ```json
+      {
+        "userKeyID": 2,
+        "userID": 1,
+        "keyID": 1,
+        "machinesUsed": 1
+      }
+      ```
 
-#### `POST api/KeyExtension`
-- **Description:** Extends the expiration date of a key by one year.
-- **Response:**
-  - **Success (200 OK):** Returns details after extending the key expiration date.
-    ```json
-    {
-      "keyId": 2,
-      "keyValue": "key2",
-      "description": "Sample key 2",
-      "expirationDate": "2025-02-16T00:00:00Z"
-    }
-    ```
-  - **Error (4xx):** If the specified key ID is not found or if extension fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Key not found for extension."
-    }
-    ```
-
-#### `GET api/KeyExtension/check-expiration/id`
-- **Description:** Checks the expiration date of a key based on ID.
-- **Response:**
-  - **Success (200 OK):** Returns the expiration date details of the specified key.
-    ```json
-    {
-      "keyId": 2,
-      "keyValue": "key2",
-      "description": "Sample key 2",
-      "expirationDate": "2025-02-16T00:00:00Z"
-    }
-    ```
-  - **Error (4xx):** If the specified key ID is not found or if the request fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Key not found for expiration check."
-    }
-    ```
-
-#### `GET api/KeyExtension/check-expiration-by-value/keyvalue`
-- **Description:** Checks the expiration date of a key based on its key value.
-- **Response:**
-  - **Success (200 OK):** Returns the expiration date details of the specified key.
-    ```json
-    {
-      "keyId": 2,
-      "keyValue": "key2",
-      "description": "Sample key 2",
-      "expirationDate": "2025-02-16T00:00:00Z"
-    }
-    ```
-  - **Error (4xx):** If the specified key value is not found or if the request fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "Key value not found for expiration check."
-    }
-    ```
-### User Key API
-
-#### `GET api/UserKey/id`
-- **Description:** Checks userKey ID.
-- **Response:**
-  - **Success (200 OK):** Returns userKey ID details.
-    ```json
-    {
-      "userKeyId": 1,
-      "userId": 2,
-      "keyId": 2,
-      "expirationDate": "2025-02-16T00:00:00Z"
-    }
-    ```
-  - **Error (4xx):** If the specified userKey ID is not found or if the request fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "UserKey ID not found."
-    }
-    ```
-
-#### `GET api/UserKey/key-info/id`
-- **Description:** Checks key information associated with a userKey ID.
-- **Response:**
-  - **Success (200 OK):** Returns details of the key associated with the specified userKey ID.
-    ```json
-    {
-      "keyId": 2,
-      "keyValue": "key2",
-      "description": "Sample key 2",
-      "expirationDate": "2025-02-16T00:00:00Z"
-    }
-    ```
-  - **Error (4xx):** If the specified userKey ID is not found or if the request fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "UserKey ID not found for key information."
-    }
-    ```
-
-#### `POST api/UserKey`
-- **Description:** Registers a key for a user.
-- **Response:**
-  - **Success (200 OK):** Returns details after registering the key for the user.
-    ```json
-    {
-      "userKeyId": 3,
-      "userId": 2,
-      "keyId": 3,
-      "expirationDate": "2025-02-16T00:00:00Z"
-    }
-    ```
-  - **Error (4xx):** If the specified user ID or key ID is not found or if registration fails, an appropriate error response is returned.
-    ```json
-    {
-      "error": "User or Key not found for registration."
-    }
-    ```
