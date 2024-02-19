@@ -526,3 +526,22 @@ This backend system is designed for session management, user authentication, and
       }
       ```
 
+---
+## Contact and Contributors
+
+For inquiries, support, or contributions, feel free to reach out to:
+
+- Leader Content here - Project Lead
+- [Anteneh Solomon](antenehcs@gmail.com  ) - Developer
+- 
+### Important Links
+-
+-
+
+## License
+
+
+
+---
+
+Thank you for using Session Management Backend! We appreciate your support.
