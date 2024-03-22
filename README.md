@@ -532,7 +532,7 @@ This backend system is designed for session management, user authentication, and
 For inquiries, support, or contributions, feel free to reach out to:
 
 - Leader Content here - Project Lead
-- [Anteneh Solomon](antenehcs@gmail.com  ) - Developer
+- [Anteneh Solomon](antenehcs@gmail.co  ) - Backend - Developer +251943291709
 - 
 ### Important Links
 -
