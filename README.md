@@ -2,7 +2,7 @@
 
 ## Tech Stack: ASP.NET Core Web API
 
-This backend system is designed for session management, user authentication, and key management using ASP.NET Core Web API.
+This backend system is designed for session management, user authentication, and key management using ASP.NET Core Web API + Swagger.
 
 ## Table of Contents
 # API Reference
